@@ -1,5 +1,3 @@
-Here is the **full, clean, updated README.md**, rewritten end-to-end to match your actual environment template and **without using em dashes**.
-You can copy and paste this directly into GitHub.
 
 ---
 
