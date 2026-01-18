@@ -17,27 +17,26 @@ class DbConnect:
     DB_USER = settings.USERNAME
     DB_PASSWORD = settings.PASSWORD
     DB_PORT = settings.DB_PORT
+    PG_DUMP_PATH = settings.PG_DUMP_PATH
+    PREFIX = settings.BACKUP_FILE_PREFIX
     
     _DATE_STR = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    _FILE_DIR = Path(__file__).parent
-    SAVE_DIR = Path(_FILE_DIR, 'backups') 
-    
-    
-    COMMAND_LIST = [
-        'pg_dump', 
-        f'-h {DB_URL}',
-        f'-p {DB_PORT}',
-        f'-d {DB_PASSWORD}',
-        f'-U {DB_USER}'
-    ]
+    _PROJECT_ROOT = Path(__file__).parent.parent
+    SAVE_DIR = Path(_PROJECT_ROOT, 'backups') 
     
     def __init__(self):
-        self.SAVE_DIR.mkdir(parents=False, exist_ok=True)
+        self.SAVE_DIR.mkdir(parents=True, exist_ok=True)
         self.save_path = str(
             Path(
                 self.SAVE_DIR,
-                f'{self.DB_NAME}-{self._DATE_STR}.sql'
+                f'{self.PREFIX}-{self._DATE_STR}.sql'
             )
         )
-        self.connect_str = ' '.join(self.COMMAND_LIST)
-        
+        self.command_args = [
+            self.PG_DUMP_PATH or 'pg_dump',
+            '-h', self.DB_URL,
+            '-p', self.DB_PORT,
+            '-U', self.DB_USER,
+            '-d', self.DB_NAME,
+            '-f', self.save_path
+        ]
